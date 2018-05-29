@@ -20,6 +20,11 @@
                     templateUrl: 'src/pages/todo/details/detail.html',
                     controller: 'TodoDetailCtrl'
                 })
+            .when('/todoEdit/:todoId',
+                {
+                    templateUrl: 'src/pages/todo/edit/edit.html',
+                    controller: 'TodoEditCtrl'
+                })
             .otherwise({redirectTo: '/'});
     }
 

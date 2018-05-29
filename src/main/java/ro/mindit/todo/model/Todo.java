@@ -43,4 +43,14 @@ public class Todo implements Serializable{
 	public void setPriority(String priority) {
 		this.priority = priority;
 	}
+
+	@Override
+	public String toString() {
+		return "Todo{" +
+				"id=" + id +
+				", name='" + name + '\'' +
+				", owner='" + owner + '\'' +
+				", priority='" + priority + '\'' +
+				'}';
+	}
 }

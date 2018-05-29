@@ -111,4 +111,111 @@ public class TodoDao {
         return todoList;
     }
 
+    /**
+     * Creates a new Todo
+     * @param todo
+     * @return the ToDo with the inserted id
+     * @throws SQLException
+     */
+    public Todo saveNew(Todo todo) throws SQLException {
+
+        String sql = "INSERT into TODO (name, owner, priority) VALUES (?, ?, ?)";
+
+        connect();
+
+        PreparedStatement pstmt = jdbcConnection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+
+        pstmt.setString(1, todo.getName());
+        pstmt.setString(2, todo.getOwner());
+        pstmt.setString(3, todo.getPriority());
+
+        pstmt.executeUpdate();
+
+        ResultSet rs = pstmt.getGeneratedKeys();
+        int last_id = -1;
+        if(rs.next()) {
+            last_id = rs.getInt(1);
+        }
+
+
+        rs.close();
+        pstmt.close();
+
+        disconnect();
+
+        todo.setId(last_id);
+        return todo;
+    }
+
+
+    /**
+     * Updates an existing Todo
+     * @param todo
+     * @return the modified Todo
+     * @throws SQLException
+     */
+    public Todo saveExisting(Todo todo) throws Exception {
+
+        if (todo.getId() <= 0) {
+            throw new Exception("The provided id must be greater than 0");
+        }
+
+        String sql = "UPDATE TODO set name=?, owner=?, priority=? WHERE id=?";
+
+        connect();
+
+        PreparedStatement pstmt = jdbcConnection.prepareStatement(sql);
+
+        pstmt.setString(1, todo.getName());
+        pstmt.setString(2, todo.getOwner());
+        pstmt.setString(3, todo.getPriority());
+        pstmt.setInt(4, todo.getId());
+
+        int num_changed = pstmt.executeUpdate();
+
+        if (num_changed == 0) {
+            throw new Exception("No todo updated");
+        }
+
+        pstmt.close();
+
+        disconnect();
+
+        return todo;
+    }
+
+    /**
+     * Deletes an existing Todo
+     * @param id
+     * @return the modified Todo
+     * @throws SQLException
+     */
+    public int deleteExisting(int id) throws Exception {
+
+        if (id <= 0) {
+            throw new Exception("The provided id must be greater than 0");
+        }
+
+        String sql = "DELETE FROM TODO WHERE id=?";
+
+        connect();
+
+        PreparedStatement pstmt = jdbcConnection.prepareStatement(sql);
+
+        pstmt.setInt(1, id);
+
+
+        int num_changed = pstmt.executeUpdate();
+
+        if (num_changed == 0) {
+            throw new Exception("No todo deleted");
+        }
+
+        pstmt.close();
+
+        disconnect();
+
+        return id;
+    }
+
 }

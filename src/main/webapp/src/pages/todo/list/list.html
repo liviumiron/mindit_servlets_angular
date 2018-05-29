@@ -9,7 +9,9 @@
                 <td>Operation</td>
             </tr>
             <tr ng-repeat="todo in todos">
-                <td><a href="#/todoDetail/{{todo.id}}">{{todo.name}}</a></td>
+                <td>{{todo.name}}</td>
+                <td><a href="#/todoDetail/{{todo.id}}">Details</a></td>
+                <td><a href="#/todoEdit/{{todo.id}}">Edit</a></td>
             </tr>
         </table>
     </div>

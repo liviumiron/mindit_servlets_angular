@@ -41,6 +41,34 @@ public class TodoResource extends HttpServlet {
     }
 
     @Override
+    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+
+        // set response content type
+        response.setContentType("application/json");
+
+//        String json = getTodoFromMemory(request);
+
+
+        String json;
+
+        if (request.getParameter("delete") != null) {
+            json = deleteTodoFromDb(request);
+        } else if (request.getParameter("todoid") != null) {
+            json = putTodoToDb(request);
+        } else {
+            json = postTodoToDb(request);
+        }
+        PrintWriter out = response.getWriter();
+        out.print(json);
+        out.flush();
+    }
+
+
+
+
+
+
+    @Override
     public void destroy() {
     }
 
@@ -51,10 +79,11 @@ public class TodoResource extends HttpServlet {
         String id = request.getQueryString();
         try {
             // Connect to the database
-            todoDao.connect();
+            // todoDao.connect();
 
             if (id != null) {
-                Todo todo = todoDao.findOne(1);
+                id = id.substring(3);
+                Todo todo = todoDao.findOne(Integer.parseInt(id));
                 json = objectMapper.writeValueAsString(todo);
             } else {
                 List<Todo> todos = todoDao.findAll();
@@ -62,13 +91,123 @@ public class TodoResource extends HttpServlet {
             }
 
             // Disconnect from the database
-            todoDao.disconnect();
+            // todoDao.disconnect();
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return json;
     }
+
+    private String postTodoToDb(HttpServletRequest request) throws JsonProcessingException {
+        String json = "";
+        ObjectMapper objectMapper = new ObjectMapper();
+
+
+        try {
+            // Connect to the database
+            //todoDao.connect();
+
+            Todo todo = new Todo();
+            String name = request.getParameter("name");
+            String owner = request.getParameter("owner");
+            String priority = request.getParameter("priority");
+
+
+            todo.setName(name);
+            todo.setOwner(owner);
+            todo.setPriority(priority);
+
+            System.out.println("The todo will be " + todo);
+
+            todoDao.saveNew(todo);
+            json = objectMapper.writeValueAsString(todo);
+
+
+            // Disconnect from the database
+            //todoDao.disconnect();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return json;
+    }
+
+
+    private String putTodoToDb(HttpServletRequest request) throws JsonProcessingException {
+        String json = "";
+        ObjectMapper objectMapper = new ObjectMapper();
+
+
+        try {
+            // Connect to the database
+            //todoDao.connect();
+
+            Todo todo = new Todo();
+            String idStr = request.getParameter("todoid");
+
+
+            String name = request.getParameter("name");
+            String owner = request.getParameter("owner");
+            String priority = request.getParameter("priority");
+
+
+            System.out.println("Id: " + idStr);
+            System.out.println("Name: " + name);
+            System.out.println("Owner: " + owner);
+            System.out.println("Priority: " + priority);
+
+            int id = Integer.parseInt(idStr);
+            todo.setId(id);
+            todo.setName(name);
+            todo.setOwner(owner);
+            todo.setPriority(priority);
+
+            System.out.println("The todo will be " + todo);
+
+            todoDao.saveExisting(todo);
+            json = objectMapper.writeValueAsString(todo);
+
+
+            // Disconnect from the database
+            //todoDao.disconnect();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return json;
+    }
+
+    private String deleteTodoFromDb(HttpServletRequest request) throws JsonProcessingException {
+        String json = "";
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        try {
+            // Connect to the database
+            //todoDao.connect();
+            Todo todo = new Todo();
+            String idStr = request.getParameter("todoid");
+            int id = Integer.parseInt(idStr);
+            todo.setId(id);
+
+            todoDao.deleteExisting(id);
+
+            json = objectMapper.writeValueAsString(todo);
+
+            // Disconnect from the database
+            //todoDao.disconnect();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return json;
+    }
+
+
 
     private String getTodoFromMemory(HttpServletRequest request) throws JsonProcessingException {
         String json = "";

@@ -8,6 +8,7 @@
     <name>Angular With Servlets</name>
 
 
+
     <dependencies>
 
         <dependency>
@@ -17,10 +18,13 @@
             <scope>test</scope>
         </dependency>
 
+
+
         <dependency>
-            <groupId>postgresql</groupId>
+            <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>9.3-1102.jdbc41</version>
+            <!-- <version>9.3-1102-jdbc41</version> -->
+            <version>42.2.2</version>
         </dependency>
 
         <dependency>
@@ -49,6 +53,7 @@
                     <port>8080</port>
                     <server>TomcatServer</server>
                     <path>/</path>
+
                 </configuration>
             </plugin>
             <plugin>
@@ -57,6 +62,7 @@
                 <configuration>
                     <source>1.6</source>
                     <target>1.6</target>
+
                 </configuration>
             </plugin>
         </plugins>
