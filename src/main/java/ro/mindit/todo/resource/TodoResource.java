@@ -15,7 +15,10 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import ro.mindit.todo.util.Utils;
 
 public class TodoResource extends HttpServlet {
 
@@ -48,15 +51,23 @@ public class TodoResource extends HttpServlet {
 
 //        String json = getTodoFromMemory(request);
 
-
+        System.out.println("in post!!!!!");
         String json;
+        Map<String,String> myMap = new HashMap<String, String>();
+        myMap = Utils.getJSONFromRequest(request);
+        System.out.println("The map returned is " + myMap.toString());
 
-        if (request.getParameter("delete") != null) {
-            json = deleteTodoFromDb(request);
-        } else if (request.getParameter("todoid") != null) {
-            json = putTodoToDb(request);
+
+
+        if (myMap.containsKey("delete")) {
+            System.out.println("In delete");
+            json = deleteTodoFromDb(request, myMap);
+        } else if (myMap.containsKey("id") && !myMap.get("id").equals("0")) {
+            System.out.println("In put");
+            json = putTodoToDb(request, myMap);
         } else {
-            json = postTodoToDb(request);
+            System.out.println("In post");
+            json = postTodoToDb(request, myMap);
         }
         PrintWriter out = response.getWriter();
         out.print(json);
@@ -99,9 +110,10 @@ public class TodoResource extends HttpServlet {
         return json;
     }
 
-    private String postTodoToDb(HttpServletRequest request) throws JsonProcessingException {
+    private String postTodoToDb(HttpServletRequest request, Map<String, String> myMap) throws JsonProcessingException {
         String json = "";
         ObjectMapper objectMapper = new ObjectMapper();
+
 
 
         try {
@@ -109,9 +121,9 @@ public class TodoResource extends HttpServlet {
             //todoDao.connect();
 
             Todo todo = new Todo();
-            String name = request.getParameter("name");
-            String owner = request.getParameter("owner");
-            String priority = request.getParameter("priority");
+            String name = myMap.get("name");
+            String owner = myMap.get("owner");
+            String priority = myMap.get("priority");
 
 
             todo.setName(name);
@@ -134,9 +146,10 @@ public class TodoResource extends HttpServlet {
     }
 
 
-    private String putTodoToDb(HttpServletRequest request) throws JsonProcessingException {
+    private String putTodoToDb(HttpServletRequest request, Map<String, String> myMap) throws JsonProcessingException {
         String json = "";
         ObjectMapper objectMapper = new ObjectMapper();
+
 
 
         try {
@@ -144,12 +157,12 @@ public class TodoResource extends HttpServlet {
             //todoDao.connect();
 
             Todo todo = new Todo();
-            String idStr = request.getParameter("todoid");
+            String idStr = myMap.get("id");
 
 
-            String name = request.getParameter("name");
-            String owner = request.getParameter("owner");
-            String priority = request.getParameter("priority");
+            String name = myMap.get("name");
+            String owner = myMap.get("owner");
+            String priority = myMap.get("priority");
 
 
             System.out.println("Id: " + idStr);
@@ -180,15 +193,17 @@ public class TodoResource extends HttpServlet {
         return json;
     }
 
-    private String deleteTodoFromDb(HttpServletRequest request) throws JsonProcessingException {
+    private String deleteTodoFromDb(HttpServletRequest request, Map<String, String> myMap) throws JsonProcessingException {
         String json = "";
         ObjectMapper objectMapper = new ObjectMapper();
+
+
 
         try {
             // Connect to the database
             //todoDao.connect();
             Todo todo = new Todo();
-            String idStr = request.getParameter("todoid");
+            String idStr = myMap.get("id");
             int id = Integer.parseInt(idStr);
             todo.setId(id);
 

@@ -2,13 +2,12 @@
   <div class="panel-heading">{{todo.name}}</div>
   <div class="panel-body">
       <!-- todo: facut asta din AJAX -->
-        <form method="post" action="">
-            <p>Owner: <input name="name" id='todoName' value="{{todo.name}}" type="text"></p>
-            <p>Owner: <input name="owner" id='todoOwner' value="{{todo.owner}}" type="text"></p>
-            <p>Priority: <input name="priority" id='todoPriority' value="{{todo.priority}}" type="text"></p>
-                <input name="todoid" type="hidden" value="{{todo.id}}">
-            <p><input type="submit" value="Update"></p>
-        </form>
+        <p>Owner: <input name="name" id='todoName' ng-model="todo.name" type="text"></p>
+        <p>Owner: <input name="owner" id='todoOwner' ng-model="todo.owner" type="text"></p>
+        <p>Priority: <input name="priority" id='todoPriority' ng-model="todo.priority" type="text"></p>
+            <input name="id" type="hidden" ng-model="todo.id">
+        <p><button ng-click="edit()">Save</button></p>
+
 
         <p><a id='goBackLink' href='/Angular-Servlets/#/'>Back to list</a></p>
   </div>

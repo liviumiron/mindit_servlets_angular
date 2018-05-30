@@ -3,15 +3,23 @@
         <h3 class="panel-title">Todo List</h3>
     </div>
     <div>
-        <table class="table">
+        <table class="table" >
             <tr>
                 <td>Name</td>
                 <td>Operation</td>
             </tr>
             <tr ng-repeat="todo in todos">
                 <td>{{todo.name}}</td>
-                <td><a href="#/todoDetail/{{todo.id}}">Details</a></td>
-                <td><a href="#/todoEdit/{{todo.id}}">Edit</a></td>
+                <td>
+                    <table style="width: 300px">
+                        <tr>
+                            <td><a href="#/todoDetail/{{todo.id}}">Details</a></td>
+                            <td><a href="#/todoEdit/{{todo.id}}">Edit</a></td>
+
+                            <td><a ng-click="remove(todo.id)">Remove</a></td>
+                        </tr>
+                    </table>
+                </td>
             </tr>
         </table>
     </div>
